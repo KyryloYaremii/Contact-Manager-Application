@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error: ' + error.message);
         } finally {
             uploadBtn.disabled = false;
-            uploadBtn.innerHTML = 'Загрузить';
+            uploadBtn.innerHTML = 'Upload';
         }
     }
 
@@ -111,43 +111,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const editModal = new bootstrap.Modal(document.getElementById('editModal'));
 
+    document.getElementById('saveEditBtn').addEventListener('click', async () => {
+        const id = document.getElementById('editId').value;
+        const name = document.getElementById('editName').value.trim();
+        const dateOfBirth = document.getElementById('editDate').value;
+        const phone = document.getElementById('editPhone').value.trim();
+        const salary = parseFloat(document.getElementById('editSalary').value);
+        const married = document.getElementById('editMarried').checked;
+
+        let errors = [];
+
+        if (!name) errors.push("The name can't be empty.");
+        if (!dateOfBirth) errors.push("Birth date is required.");
+        else {
+            const birthDate = new Date(dateOfBirth);
+            if (birthDate > new Date()) errors.push("Birth date cannot be in the future time.");
+        }
+        if (isNaN(salary) || salary < 0) errors.push("Salary must be a number greater than or equal to 0.");
+        if (phone && !/^\+?[\d\s\-()]{7,20}$/.test(phone)) {
+            errors.push("Incorrect phone format.");
+        }
+
+        if (errors.length > 0) {
+            alert("Filling error:\n- " + errors.join("\n- "));
+            return; 
+        }
+
+        const dto = { name, dateOfBirth, married, phone, salary };
+
+        try {
+            const response = await fetch(`/api/employees/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dto)
+            });
+
+            if (response.ok) {
+                bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                await loadEmployees();
+            } else {
+                const errData = await response.json();
+                alert(errData.message || 'Error during update');
+            }
+        } catch (err) {
+            console.error('Update error:', err);
+        }
+    });
+
     function editEmployee(id) {
         const emp = employeesData.find(e => e.id == id);
         if (!emp) return;
 
         document.getElementById('editId').value = emp.id;
         document.getElementById('editName').value = emp.name;
-        document.getElementById('editDate').value = emp.dateOfBirth.split('T')[0];
+
+        if (emp.dateOfBirth) {
+            document.getElementById('editDate').value = emp.dateOfBirth.split('T')[0];
+        }
+
         document.getElementById('editMarried').checked = emp.married;
-        document.getElementById('editPhone').value = emp.phone;
+        document.getElementById('editPhone').value = emp.phone || '';
         document.getElementById('editSalary').value = emp.salary;
 
         editModal.show();
     }
-
-    document.getElementById('saveEditBtn').addEventListener('click', async () => {
-        const id = document.getElementById('editId').value;
-        const dto = {
-            name: document.getElementById('editName').value,
-            dateOfBirth: document.getElementById('editDate').value,
-            married: document.getElementById('editMarried').checked,
-            phone: document.getElementById('editPhone').value,
-            salary: parseFloat(document.getElementById('editSalary').value)
-        };
-
-        const response = await fetch(`/api/employees/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dto)
-        });
-
-        if (response.ok) {
-            editModal.hide();
-            await loadEmployees();
-        } else {
-            alert('Error occured');
-        }
-    });
 
     tableBody.addEventListener('click', async (e) => {
         const id = e.target.closest('button')?.dataset.id;
