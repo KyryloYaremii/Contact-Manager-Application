@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CsvHelper" Version="33.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.3.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\ContactManagerApp.Domain\ContactManagerApp.Domain.csproj" />
+		<ProjectReference Include="..\ContactManagerApp.Shared\ContactManagerApp.Shared.csproj" />
+	</ItemGroup>
+	
+</Project>
