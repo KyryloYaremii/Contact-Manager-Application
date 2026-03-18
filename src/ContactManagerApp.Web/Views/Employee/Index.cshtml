@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Employee Management";
+}
+
+<div class="container mt-4">
+    <h2>List of employees</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Load data from CSV</h5>
+            <div class="input-group">
+                <input type="file" class="form-control" id="csvFileInput" accept=".csv">
+                <button class="btn btn-primary" id="uploadBtn" type="button">Upload</button>
+            </div>
+            <div id="uploadMessage" class="mt-2 text-success" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by columns...">
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-stripped table-hover table-bordered" id="employeesTable">
+            <thead class="table-dark">
+                <tr>
+                    <th style="cursor: pointer" data-sort="name">Name</th>
+                    <th style="cursor: pointer" data-sort="dateOfBirth">Date of Birth</th>
+                    <th style="cursor: pointer" data-sort="married">Married</th>
+                    <th style="cursor: pointer" data-sort="phone">Phone</th>
+                    <th style="cursor: pointer" data-sort="salary">Salary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="employeesTableBody">
+                <tr>
+                    <td colspan="6" class="text-center">Loading data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Edit</h5></div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <input type="text" id="editName" class="form-control mb-2" placeholder="Name">
+                <input type="date" id="editDate" class="form-control mb-2">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="editMarried">
+                    <label class="form-check-label">Married</label>
+                </div>
+                <input type="text" id="editPhone" class="form-control mb-2" placeholder="Phone">
+                <input type="number" id="editSalary" class="form-control" placeholder="Salary">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="saveEditBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/employee.js"></script>
+}
